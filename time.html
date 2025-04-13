@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đồng Hồ</title>
+    <style>
+        body {
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .timer-container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .timer-box {
+            text-align: center;
+        }
+
+        .timer-label {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            margin-bottom: 10px;
+        }
+
+        .controls button {
+            padding: 8px 15px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .controls button.active {
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .timer-display {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+        }
+
+        .input-time {
+            margin-bottom: 15px;
+        }
+
+        .input-time label {
+            margin-right: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .input-time input[type="number"] {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .input-time span {
+            margin: 0 3px;
+            color: #777;
+        }
+
+        .timer-controls button {
+            padding: 8px 12px;
+            margin: 0 3px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .timer-controls button.start {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .timer-controls button.pause {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .timer-controls button.reset {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="margin-left: -470px;">
+        <div class="timer-container">
+            <div class="timer-box">
+                <div class="timer-label">Đồng Hồ 1</div>
+                <div class="controls">
+                    <button class="mode-btn active" data-timer="1" data-mode="countdown">Đếm Ngược</button>
+                    <button class="mode-btn" data-timer="1" data-mode="stopwatch">Đếm Lên</button>
+                </div>
+                <div class="input-time countdown-input">
+                    <label for="minutes1">Phút:</label>
+                    <input type="number" id="minutes1" value="0" min="0">
+                    <span>:</span>
+                    <label for="seconds1">Giây:</label>
+                    <input type="number" id="seconds1" value="10" min="0" max="59">
+                    <span>:</span>
+                    <label for="ticks1">Tích Tắc:</label>
+                    <input type="number" id="ticks1" value="0" min="0" max="99">
+                </div>
+                <div class="timer-display">
+                    <span id="display-minutes1">00</span>:<span id="display-seconds1">00</span>:<span id="display-ticks1">00</span>
+                </div>
+                <div class="timer-controls">
+                    <button class="start-btn" data-timer="1">Bắt Đầu</button>
+                    <button class="pause-btn" data-timer="1">Tạm Dừng</button>
+                    <button class="reset-btn" data-timer="1">Đặt Lại</button>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+    <div class="container" style="margin-top: -270px; margin-left: 550px;">
+        <div class="timer-box">
+            <div class="timer-label">Đồng Hồ 2</div>
+            <div class="controls">
+                <button class="mode-btn active" data-timer="2" data-mode="countdown">Đếm Ngược</button>
+                <button class="mode-btn" data-timer="2" data-mode="stopwatch">Đếm Lên</button>
+            </div>
+            <div class="input-time countdown-input">
+                <label for="minutes2">Phút:</label>
+                <input type="number" id="minutes2" value="0" min="0">
+                <span>:</span>
+                <label for="seconds2">Giây:</label>
+                <input type="number" id="seconds2" value="5" min="0" max="59">
+                <span>:</span>
+                <label for="ticks2">Tích Tắc:</label>
+                <input type="number" id="ticks2" value="0" min="0" max="99">
+            </div>
+            <div class="timer-display">
+                <span id="display-minutes2">00</span>:<span id="display-seconds2">00</span>:<span id="display-ticks2">00</span>
+            </div>
+            <div class="timer-controls">
+                <button class="start-btn" data-timer="2">Bắt Đầu</button>
+                <button class="pause-btn" data-timer="2">Tạm Dừng</button>
+                <button class="reset-btn" data-timer="2">Đặt Lại</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const timerData = [
+            {
+                minutesInputId: 'minutes1',
+                secondsInputId: 'seconds1',
+                ticksInputId: 'ticks1',
+                displayMinutesId: 'display-minutes1',
+                displaySecondsId: 'display-seconds1',
+                displayTicksId: 'display-ticks1',
+                modeButtons: null, // Sẽ được gán sau
+                startButton: null, // Sẽ được gán sau
+                pauseButton: null, // Sẽ được gán sau
+                resetButton: null, // Sẽ được gán sau
+                intervalId: null,
+                minutes: 0,
+                seconds: 0,
+                ticks: 0,
+                isPaused: false,
+                isCountdown: true,
+                savedTime: { countdown: { minutes: 0, seconds: 0, ticks: 0 }, stopwatch: { minutes: 0, seconds: 0, ticks: 0 } }
+            },
+            {
+                minutesInputId: 'minutes2',
+                secondsInputId: 'seconds2',
+                ticksInputId: 'ticks2',
+                displayMinutesId: 'display-minutes2',
+                displaySecondsId: 'display-seconds2',
+                displayTicksId: 'display-ticks2',
+                modeButtons: null, // Sẽ được gán sau
+                startButton: null, // Sẽ được gán sau
+                pauseButton: null, // Sẽ được gán sau
+                resetButton: null, // Sẽ được gán sau
+                intervalId: null,
+                minutes: 0,
+                seconds: 0,
+                ticks: 0,
+                isPaused: false,
+                isCountdown: true,
+                savedTime: { countdown: { minutes: 0, seconds: 0, ticks: 0 }, stopwatch: { minutes: 0, seconds: 0, ticks: 0 } }
+            }
+        ];
+
+        timerData.forEach((timer, index) => {
+            const timerId = index + 1;
+            timer.modeButtons = document.querySelectorAll(`.timer-box:nth-child(${timerId}) .controls .mode-btn`);
+            timer.startButton = document.querySelector(`.timer-box:nth-child(${timerId}) .timer-controls .start-btn`);
+            timer.pauseButton = document.querySelector(`.timer-box:nth-child(${timerId}) .timer-controls .pause-btn`);
+            timer.resetButton = document.querySelector(`.timer-box:nth-child(${timerId}) .timer-controls .reset-btn`);
+
+            timer.modeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const mode = this.dataset.mode;
+                    timer.isCountdown = (mode === 'countdown');
+                    timer.modeButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    stopInterval(timer);
+                    loadSavedTime(timer);
+                    updateDisplay(timer);
+                });
+            });
+
+            timer.startButton.addEventListener('click', () => startTimer(timer));
+            timer.pauseButton.addEventListener('click', () => pauseTimer(timer));
+            timer.resetButton.addEventListener('click', () => resetTimer(timer));
+
+            loadSavedTime(timer);
+            updateDisplay(timer);
+        });
+
+        function updateDisplay(timer) {
+            const minutesElement = document.getElementById(timer.displayMinutesId);
+            const secondsElement = document.getElementById(timer.displaySecondsId);
+            const ticksElement = document.getElementById(timer.displayTicksId);
+            minutesElement.textContent = String(timer.minutes).padStart(2, '0');
+            secondsElement.textContent = String(timer.seconds).padStart(2, '0');
+            ticksElement.textContent = String(timer.ticks).padStart(2, '0');
+        }
+
+        function startTimer(timer) {
+            if (timer.intervalId) return;
+            timer.isPaused = false;
+
+            if (timer.isCountdown) {
+                const minutesInput = document.getElementById(timer.minutesInputId);
+                const secondsInput = document.getElementById(timer.secondsInputId);
+                const ticksInput = document.getElementById(timer.ticksInputId);
+                timer.minutes = parseInt(minutesInput.value) || 0;
+                timer.seconds = parseInt(secondsInput.value) || 0;
+                timer.ticks = parseInt(ticksInput.value) || 0;
+                updateDisplay(timer);
+
+                if (timer.minutes === 0 && timer.seconds === 0 && timer.ticks === 0) {
+                    document.getElementById(timer.displayTicksId).textContent = 'Nhập';
+                    return;
+                }
+
+                timer.intervalId = setInterval(() => {
+                    if (!timer.isPaused) {
+                        timer.ticks--;
+                        if (timer.ticks < 0) {
+                            timer.ticks = 99;
+                            timer.seconds--;
+                            if (timer.seconds < 0) {
+                                timer.seconds = 59;
+                                timer.minutes--;
+                                if (timer.minutes < 0) {
+                                    stopInterval(timer);
+                                    document.getElementById(timer.displayMinutesId).textContent = '00';
+                                    document.getElementById(timer.displaySecondsId).textContent = '00';
+                                    document.getElementById(timer.displayTicksId).textContent = 'Hết!';
+                                    return;
+                                }
+                            }
+                        }
+                        updateDisplay(timer);
+                    }
+                }, 10);
+            } else { // Stopwatch mode
+                timer.intervalId = setInterval(() => {
+                    if (!timer.isPaused) {
+                        timer.ticks++;
+                        if (timer.ticks > 99) {
+                            timer.ticks = 0;
+                            timer.seconds++;
+                            if (timer.seconds > 59) {
+                                timer.seconds = 0;
+                                timer.minutes++;
+                            }
+                        }
+                        updateDisplay(timer);
+                    }
+                }, 10);
+            }
+            timer.startButton.textContent = 'Tiếp Tục';
+        }
+
+        function pauseTimer(timer) {
+            if (!timer.intervalId) return;
+            timer.isPaused = true;
+            timer.startButton.textContent = 'Tiếp Tục';
+        }
+
+        function resetTimer(timer) {
+            stopInterval(timer);
+            if (timer.isCountdown) {
+                const minutesInput = document.getElementById(timer.minutesInputId);
+                const secondsInput = document.getElementById(timer.secondsInputId);
+                const ticksInput = document.getElementById(timer.ticksInputId);
+                timer.minutes = parseInt(minutesInput.value) || 0;
+                timer.seconds = parseInt(secondsInput.value) || 0;
+                timer.ticks = parseInt(ticksInput.value) || 0;
+            } else {
+                timer.minutes = 0;
+                timer.seconds = 0;
+                timer.ticks = 0;
+            }
+            updateDisplay(timer);
+            timer.startButton.textContent = 'Bắt Đầu';
+        }
+
+        function stopInterval(timer) {
+            clearInterval(timer.intervalId);
+            timer.intervalId = null;
+        }
+
+        function loadSavedTime(timer) {
+            if (timer.isCountdown) {
+                timer.minutes = timer.savedTime.countdown.minutes;
+                timer.seconds = timer.savedTime.countdown.seconds;
+                timer.ticks = timer.savedTime.countdown.ticks;
+                const minutesInput = document.getElementById(timer.minutesInputId);
+                const secondsInput = document.getElementById(timer.secondsInputId);
+                const ticksInput = document.getElementById(timer.ticksInputId);
+                minutesInput.value = timer.minutes;
+                secondsInput.value = timer.seconds;
+                ticksInput.value = timer.ticks;
+            } else {
+                timer.minutes = timer.savedTime.stopwatch.minutes;
+                timer.seconds = timer.savedTime.stopwatch.seconds;
+                timer.ticks = timer.savedTime.stopwatch.ticks;
+            }
+        }
+
+        // Lưu thời gian hiện tại khi chuyển đổi chế độ hoặc dừng
+        function saveCurrentTime(timer) {
+            if (timer.isCountdown) {
+                const minutesInput = document.getElementById(timer.minutesInputId);
+                const secondsInput = document.getElementById(timer.secondsInputId);
+                const ticksInput = document.getElementById(timer.ticksInputId);
+                timer.savedTime.countdown.minutes = parseInt(minutesInput.value) || timer.minutes;
+                timer.savedTime.countdown.seconds = parseInt(secondsInput.value) || timer.seconds;
+                timer.savedTime.countdown.ticks = parseInt(ticksInput.value) || timer.ticks;
+            } else {
+                timer.savedTime.stopwatch.minutes = timer.minutes;
+                timer.savedTime.stopwatch.seconds = timer.seconds;
+                timer.savedTime.stopwatch.ticks = timer.ticks;
+            }
+        }
+
+        timerData.forEach(timer => {
+            timer.modeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    saveCurrentTime(timer);
+                    stopInterval(timer);
+                });
+            });
+            timer.startButton.addEventListener('click', () => saveCurrentTime(timer));
+            timer.pauseButton.addEventListener('click', () => saveCurrentTime(timer));
+            timer.resetButton.addEventListener('click', () => saveCurrentTime(timer));
+        });
+
+        // Khởi tạo hiển thị ban đầu
+        timerData.forEach(timer => updateDisplay(timer));
+    </script>
+</body>
+</html>
